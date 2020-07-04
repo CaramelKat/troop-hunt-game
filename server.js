@@ -98,7 +98,7 @@ app.get('/game', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 app.get('/game/css/*', function(req, res) {
-    let filename = req.originalUrl.replace('/css/', '').trim();
+    let filename = req.originalUrl.replace('/game/css/', '').trim();
     res.sendFile(__dirname + '/css/' + filename);
 })
 
