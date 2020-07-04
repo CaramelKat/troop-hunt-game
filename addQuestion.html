@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Place favicon.ico in the root directory -->
+
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/media-queries.css">
+    <link rel="stylesheet" href="css/normalize.css">
+
+    <title>Scavenger Hunt Leaderboard</title>
+</head>
+<body>
+<div class="top-container">
+    <h1>Question: </h1>
+    <aside class="pull-quote">
+        <blockquote>
+            <p>QUESTION_TEXT</p>
+        </blockquote>
+    </aside>
+</div>
+<center><br>
+    testing uwu
+    <label for="troop_number">Select your Troop:</label>
+    <form action="/redeemQuestion" target="testing" enctype="multipart/form-data" method="post">
+        <input type="hidden" id="question_id" name="question_id" value="QUESTION_ID_TAG">
+        <select  name="troop_number" id="troop_number">
+            TROOP_NUMBER_TAG
+        </select><br>
+        <input type="submit" value="Submit">
+    </form>
+    <iframe name="testing"></iframe>
+</center>
+</body>
+</html>
