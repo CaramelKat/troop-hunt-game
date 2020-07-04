@@ -97,7 +97,7 @@ app.get('/getTroops', function(req, res) {
 app.get('/game', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-app.get('/css/*', function(req, res) {
+app.get('/game/css/*', function(req, res) {
     let filename = req.originalUrl.replace('/css/', '').trim();
     res.sendFile(__dirname + '/css/' + filename);
 })
