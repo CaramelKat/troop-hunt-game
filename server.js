@@ -19,7 +19,7 @@ require('events').EventEmitter.defaultMaxListeners = 50;
 app.use(upload.array());
 app.use(express.static('public'));
 
-app.post('/newTroop', function(req, res){
+app.post('game/newTroop', function(req, res){
     let troop = {
         troop_number: req.body.troop_number,
         troop_guide: req.body.troop_guide,
@@ -31,7 +31,7 @@ app.post('/newTroop', function(req, res){
     res.send(newPost);
 });
 
-app.post('/newQuestion', function(req, res) {
+app.post('/game/newQuestion', function(req, res) {
     let questions = req.body.Questions;
     for (let i = 0; i < questions.length; i++) {
         let question = {
@@ -47,7 +47,7 @@ app.post('/newQuestion', function(req, res) {
     res.sendStatus(200);
 });
 
-app.post('/redeemQuestion', function(req, res){
+app.post('/game/redeemQuestion', function(req, res){
     database.connect().then(async e => {
         let question = await database.getQuestionByID(req.body.question_id);
         let troop = await database.getTroopByNumber(req.body.troop_number);
@@ -67,7 +67,7 @@ app.post('/redeemQuestion', function(req, res){
     });
 });
 
-app.get('/redeemQuestion', function(req, res) {
+app.get('/game/redeemQuestion', function(req, res) {
     let question_id = req.query.question_id;
     database.connect().then(async e => {
         let question = await database.getQuestionByID(question_id);
@@ -94,7 +94,7 @@ app.get('/getTroops', function(req, res) {
     const period = req.query.p;
     tools.data.buildTable(period, res);
 });
-app.get('/', function(req, res) {
+app.get('/game', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 app.get('/css/*', function(req, res) {
