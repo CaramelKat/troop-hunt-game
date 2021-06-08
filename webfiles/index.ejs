@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="/css/default.css">
+        <link rel="stylesheet" href="/css/default.css">
+        <link rel="stylesheet" href="/css/layout.css">
+        <link rel="stylesheet" href="/css/media-queries.css">
+        <link rel="stylesheet" href="/css/normalize.css">
+        <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th {
+                cursor: pointer;
+            }
+
+            th, td {
+                text-align: left;
+                padding: 16px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
+        <title>Scavenger Hunt Leaderboard</title>
+    </head>
+    <body>
+        <div class="top-container">
+            <h1>Scavenger Hunt Leaderboard</h1>
+            <h4>Week <%= settings.period%></h4>
+        </div>
+        <center>
+            <table id="adddrop">
+                <tbody id="search-list">
+                <tr>
+                    <th onClick="sortTable(0)">Troop</th>
+                    <th onClick="sortTable(1)">Host</th>
+                    <th onClick="sortTable(2)">Points</th>
+                </tr>
+                <% if(leaderboard.length === 0) {%>
+                    <tr>
+                        <th colspan="3">
+                            <center>
+                                <h2 style="color: black">No Troops Registered</h2>
+                            </center>
+                        </th>
+                    </tr>
+                <%}%>
+                <% for(var i = 0; i < leaderboard.length; i++) { %>
+                    <tr>
+                        <td><a><%= leaderboard[i].troop_number %></a></td>
+                        <td><%= leaderboard[i].troop_guide %></td>
+                        <td><%= leaderboard[i].points %></td>
+                    </tr>
+                <%}%>
+                </tbody>
+            </table>
+        </center>
+    </body>
+</html>

@@ -32,6 +32,25 @@ e. Others
 /*Scrolling background*/
 body {margin:0;}
 
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    cursor: pointer;
+}
+
+th, td {
+    text-align: left;
+    padding: 16px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
 .icon-bar {
   width: 100%;
   background-color: #a65e18;
@@ -74,7 +93,7 @@ body {margin:0;}
   background-color: #653d14;
 }
 .top-container {
-  background-color: #225487;
+  background-color: #003F87;
   padding: 15px;
   text-align: center;
   color: white;
@@ -246,7 +265,7 @@ body {
    font-family: notosans-regular, sans-serif;
    font-size: 15px;
    line-height: 30px;
-	color: #838C95;
+	color: #000000;
 
    -webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
 	-webkit-text-size-adjust: 100%;

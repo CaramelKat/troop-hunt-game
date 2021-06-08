@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { TROOP } = require('./models/troop');
 const { QUESTION } = require('./models/question');
+const { SETTINGS } = require('./models/settings');
 const { mongoose: mongooseConfig } = require('./config.json');
 const { uri, database, options } = mongooseConfig;
 
@@ -15,6 +16,13 @@ function verifyConnected() {
     if (!connection) {
         throw new Error('Cannot make database requets without being connected');
     }
+}
+
+async function getTroopByID(troop_id) {
+    verifyConnected();
+    return await TROOP.findOne({
+        _id: troop_id
+    });
 }
 
 async function getTroopByNumber(troop_number) {
@@ -46,21 +54,28 @@ async function getAllTroops() {
 async function getQuestionByID(question_id) {
     verifyConnected();
     return await QUESTION.findOne({
-        question_id
+        _id: question_id
     });
 }
 
 async function getAllQuestions() {
     verifyConnected();
-    return await QUESTION.findOne();
+    return await QUESTION.find();
+}
+
+async function getSettings() {
+    verifyConnected();
+    return await SETTINGS.findOne();
 }
 
 module.exports = {
     connect,
     getTroopByNumber,
     getTroopByGuideName,
+    getTroopByID,
     getTroopsBySession,
     getAllTroops,
     getQuestionByID,
-    getAllQuestions
+    getAllQuestions,
+    getSettings
 };

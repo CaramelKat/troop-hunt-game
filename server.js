@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const multer = require('multer');
+const ejs = require('ejs');
 const upload = multer();
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -8,6 +9,7 @@ const fs = require('fs-extra');
 
 const { TROOP } = require('./models/troop');
 const { QUESTION } = require('./models/question');
+const { SETTINGS } = require('./models/settings');
 const database = require('./database');
 const tools = require('./tools');
 const config = require('./config.json');
@@ -19,88 +21,269 @@ require('events').EventEmitter.defaultMaxListeners = 50;
 app.use(upload.array());
 app.use(express.static('public'));
 
-app.post('game/newTroop', function(req, res){
-    let troop = {
-        troop_number: req.body.troop_number,
-        troop_guide: req.body.troop_guide,
-        session: req.body.session,
-        points: 0,
-    };
-    const newPost = new TROOP(troop);
-    newPost.save();
-    res.send(newPost);
-});
-
-app.post('/game/newQuestion', function(req, res) {
-    let questions = req.body.Questions;
-    for (let i = 0; i < questions.length; i++) {
-        let question = {
-        question_id: req.body.Questions[i].Id,
-        question_text: req.body.Questions[i].QuestionText,
-        question_value: parseInt(req.body.Questions[i].Points),
-        };
-        const newQuestion = new QUESTION(question);
-        newQuestion.save(function(err, doc) {
-            if (err) return console.error(err);
-        });
-    }
-    res.sendStatus(200);
-});
+app.set('etag', false);
+app.disable('x-powered-by');
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/webfiles');
 
 app.post('/game/redeemQuestion', function(req, res){
     database.connect().then(async e => {
         let question = await database.getQuestionByID(req.body.question_id);
         let troop = await database.getTroopByNumber(req.body.troop_number);
         if (question === null || troop === null)
-            res.send('<link rel="stylesheet" href="css/layout.css">\n<center><div>An Error occurred, Please try again later</div></center>');
+            res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>An Error occurred, Please try again later</div></center>');
         else
         {
             if(await troop.hasQuestion(question.question_id))
-                res.send('<link rel="stylesheet" href="css/layout.css">\n<center><div>You have already redeemed that question!</div></center>');
+                res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>You have already redeemed that question!</div></center>');
             else
             {
                 await troop.addPoints(parseInt(question.question_value));
                 await troop.addQuestion(question.question_id);
-                res.send('<link rel="stylesheet" href="css/layout.css">\n<center><div>Question Received! Your troop now has ' + troop.points + ' points!</div></center>');
+                res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>Question Received! Your troop now has ' + troop.points + ' points!</div></center>');
             }
         }
     });
 });
-
-app.get('/game/redeemQuestion', function(req, res) {
-    let question_id = req.query.question_id;
+app.get('/game/redeemQuestion/:questionID', function(req, res) {
     database.connect().then(async e => {
-        let question = await database.getQuestionByID(question_id);
+        let question = await database.getQuestionByID(req.params.questionID);
         if (question === null)
-            res.sendFile(__dirname + '/404.html');
+            res.sendFile(__dirname + '/webfiles/404.html');
         else
         {
-            let troops = await database.getTroopsBySession('3');
-            let troop_number_tag = '';
-            for(let i =0; i < troops.length; i++)
-            {
-                troop_number_tag += '<option value="' + troops[i].troop_number + '">' + troops[i].troop_number + '</option>\n'
-            }
-            let file = await fs.readFile(__dirname + '/addQuestion.html', 'utf-8');
-            let newFile = file.replace(/QUESTION_ID_TAG/g, question.question_id)
-                .replace(/QUESTION_TEXT/g, question.question_text)
-                .replace(/TROOP_NUMBER_TAG/g, troop_number_tag)
-            res.send(newFile);
+            let settings = await database.getSettings()
+            let troops = await database.getTroopsBySession(settings.period);
+            res.render('addQuestion.ejs', {
+                troops: troops,
+                question: question
+            });
         }
     });
 });
-
 app.get('/getTroops', function(req, res) {
     const period = req.query.p;
     tools.data.buildTable(period, res);
 });
 app.get('/game', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
+    database.connect().then(async e => {
+        let settings = await database.getSettings();
+        if(settings === null) {
+            settings = new SETTINGS({period: 1});
+            settings.save();
+        }
+        let leaderboard = await database.getTroopsBySession(settings.period)
+        res.render('index.ejs', {
+            leaderboard: leaderboard,
+            settings: settings
+        });
+
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
 });
-app.get('/game/css/*', function(req, res) {
-    let filename = req.originalUrl.replace('/game/css/', '').trim();
-    res.sendFile(__dirname + '/css/' + filename);
-})
+app.get('/css/:filename', function(req, res) {
+    res.sendFile(__dirname + '/webfiles/css/' + req.params.filename);
+});
+app.get('/js/:filename', function(req, res) {
+    res.sendFile(__dirname + '/webfiles/js/' + req.params.filename);
+});
+
+app.get('/admin', function(req, res){
+    database.connect().then(async e => {
+        let settings = await database.getSettings();
+        if(settings === null) {
+            settings = new SETTINGS({period: 1});
+            settings.save();
+        }
+        res.render('admin_home.ejs', {
+            settings: settings,
+        });
+
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
+});
+app.post('/admin/update', function(req, res){
+    database.connect().then(async e => {
+        let settings = await database.getSettings();
+        if(req.body.period && settings.period !== req.body.period)
+            settings.period = req.body.period;
+        settings.save();
+        res.send('<h2>Period has been Updated</h2>');
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Period could not be updated.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
+
+app.get('/admin/leaderboard', function(req, res){
+
+    database.connect().then(async e => {
+        let leaderboard = await database.getAllTroops();
+
+        res.render('admin_leaderboard.ejs', {
+            leaderboard: leaderboard,
+        });
+
+    }).catch(error => {
+        console.log(error);
+        res.sendStatus(400);
+    });
+
+});
+app.get('/admin/leaderboard/new', function(req, res){
+    res.render('admin_new_troop.ejs');
+});
+app.post('/admin/leaderboard/new', function(req, res){
+    database.connect().then(async e => {
+        let leaderboard = {
+            troop_number: req.body.troop_number,
+            troop_guide: req.body.troop_guide,
+            session: req.body.session,
+            points: 0
+        }
+        const newTroop = new TROOP(leaderboard);
+        newTroop.save();
+        res.send('<h2>Troop has been Saved</h2>');
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Troop could not be updated.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
+app.get('/admin/leaderboard/:troopID', function(req, res){
+    database.connect().then(async e => {
+        let leaderboard = await database.getTroopByID(req.params.troopID);
+
+        res.render('admin_edit_troop.ejs', {
+            leaderboard: leaderboard,
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+
+});
+app.post('/admin/leaderboard/:troopID/update', function(req, res){
+    database.connect().then(async e => {
+        let leaderboard = await database.getTroopByID(req.params.troopID);
+
+        if(req.body.troop_number && leaderboard.troop_number !== req.body.troop_number)
+            leaderboard.troop_number = req.body.troop_number;
+
+        if(req.body.troop_guide && leaderboard.troop_guide !== req.body.troop_guide)
+            leaderboard.troop_guide = req.body.troop_guide;
+
+        if(req.body.session && leaderboard.session !== req.body.session)
+            leaderboard.session = req.body.session;
+
+        leaderboard.save();
+        res.send('<h2>Troop has been Updated</h2>');
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Troop could not be updated.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
+app.post('/admin/leaderboard/:troopID/delete', function(req, res){
+    database.connect().then(async e => {
+        let leaderboard = await database.getTroopByID(req.params.troopID);
+        if(leaderboard !== null) {
+            leaderboard.delete().then(err => function () {
+                res.send(err);
+            });
+            res.sendStatus(200);
+        }
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Troop could not be updated.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
+
+app.get('/admin/questions', function(req, res){
+
+    database.connect().then(async e => {
+        let questions = await database.getAllQuestions();
+
+        res.render('admin_questions.ejs', {
+            questions: questions,
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+
+});
+app.get('/admin/questions/new', function(req, res){
+    res.render('admin_new_question.ejs');
+});
+app.post('/admin/questions/new', function(req, res){
+    database.connect().then(async e => {
+        let question = {
+            question_text: req.body.question_text,
+            question_value: req.body.question_value
+        };
+        const newPost = new QUESTION(question);
+        newPost.save();
+        res.send(newPost);
+    }).catch(error => {
+        res.send({
+            error: 400,
+            message: error
+        })
+    });
+});
+app.get('/admin/questions/:questionID', function(req, res){
+    database.connect().then(async e => {
+        let question = await database.getQuestionByID(req.params.questionID);
+
+        res.render('admin_edit_question.ejs', {
+            question: question,
+        });
+
+    }).catch(error => {
+        console.log(error);
+    });
+
+});
+app.post('/admin/questions/:questionID/update', function(req, res){
+    database.connect().then(async e => {
+        let question = await database.getQuestionByID(req.params.questionID);
+
+        if(req.body.question_text && question.question_text !== req.body.question_text)
+            question.question_text = req.body.question_text;
+
+        if(req.body.question_value && question.question_value !== req.body.question_value)
+            question.question_value = req.body.question_value;
+
+        question.save();
+        res.send('<h2>Question has been Updated</h2>');
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Question could not be updated.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
+app.post('/admin/questions/:questionID/delete', function(req, res){
+    database.connect().then(async e => {
+        let question = await database.getQuestionByID(req.params.questionID);
+        if(question !== null) {
+            question.delete().then(err => function () {
+                res.send(err);
+            });
+            res.sendStatus(200);
+        }
+    }).catch(error =>
+    {
+        res.statusCode = 400;
+        res.send('<h2>Question could not be deleted.</h2><br><h4>' + error.message + '</h4>');
+    });
+});
 
 app.listen(port, function (err) {
     if (err) {

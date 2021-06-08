@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Troop Game Admin Panel</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+
+<h2 style="display: inline-block; margin-left: 20px">Troop Game Admin Panel</h2>
+
+<div class="row">
+    <div class="left" style="background-color:#bbb;max-width: 10%;">
+        <ul id="myMenu">
+            <li><a href="/admin">Home</a></li>
+            <li><a href="/admin/leaderboard">Leaderboard</a></li>
+            <li><a href="/admin/questions">Quests</a></li>
+        </ul>
+    </div>
+
+    <div class="right" style="background-color:#ddd;">
+        <h2>New Troop</h2>
+        <form action="/admin/questions/new" enctype="multipart/form-data" target="formSubmitFrame" method="post">
+            <div class="form-section">
+                <div class="section-info">
+                    <h2>Meta information</h2>
+                    <p>Specify the activity and point value</p>
+                </div>
+                <div class="section-inputs">
+                    <div class="input-div">
+                        <label for="question_text">Quest Description:</label>
+                        <input type="text" id="question_text" name="question_text" value="">
+                    </div>
+
+                    <div class="input-div">
+                        <label for="question_value">Point Value:</label><br>
+                        <input type="number" id="question_value" name="question_value" value="">
+                    </div>
+                    </div>
+                </div>
+            <div class="form-section">
+                <div class="section-info">
+                    <h2>Submit</h2>
+                    <p></p>
+                </div>
+                <div class="section-inputs">
+                    <div>
+                        <button type="submit" class="btn">Submit</button>
+                        <iframe name="formSubmitFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

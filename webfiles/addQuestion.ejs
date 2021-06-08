@@ -20,17 +20,18 @@
     <h1>Question: </h1>
     <aside class="pull-quote">
         <blockquote>
-            <p>QUESTION_TEXT</p>
+            <p><%= question.question_text%></p>
         </blockquote>
     </aside>
 </div>
 <center><br>
-    testing uwu
     <label for="troop_number">Select your Troop:</label>
-    <form action="/redeemQuestion" target="testing" enctype="multipart/form-data" method="post">
-        <input type="hidden" id="question_id" name="question_id" value="QUESTION_ID_TAG">
+    <form action="/game/redeemQuestion" target="testing" enctype="multipart/form-data" method="post">
+        <input type="hidden" id="question_id" name="question_id" value="<%=question._id%>">
         <select  name="troop_number" id="troop_number">
-            TROOP_NUMBER_TAG
+            <% for(var i = 0; i < troops.length; i++){%>
+            <option value="<%=troops[i].troop_number %>"><%=troops[i].troop_number %></option>
+            <%}%>
         </select><br>
         <input type="submit" value="Submit">
     </form>

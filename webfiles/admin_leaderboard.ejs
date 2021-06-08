@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Troop Game Admin Panel</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+
+<h2 style="display: inline-block; margin-left: 20px">Troop Game Admin Panel</h2>
+
+<div class="row">
+    <div class="left" style="background-color:#bbb;max-width: 10%;">
+        <ul id="myMenu">
+            <li><a href="/admin">Home</a></li>
+            <li><a href="/admin/leaderboard">Leaderboard</a></li>
+            <li><a href="/admin/questions">Quests</a></li>
+        </ul>
+    </div>
+
+    <div class="right" style="background-color:#ddd;">
+        <h2>Leaderboard</h2>
+        <button onclick="location.assign('/admin/leaderboard/new')">New</button>
+        <input type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search..">
+        <table id="adddrop">
+            <tbody id="search-list">
+            <tr>
+                <th onClick="sortTable(0)">Troop</th>
+                <th onClick="sortTable(1)">Host</th>
+                <th onClick="sortTable(1)">Period</th>
+                <th onClick="sortTable(2)">Points</th>
+            </tr>
+            <% for(var i = 0; i < leaderboard.length; i++) { %>
+                <tr id="<%= leaderboard[i]._id %>" onclick="location.assign('/admin/leaderboard/' + this.id)" style="cursor: pointer">
+                    <td><a><%= leaderboard[i].troop_number %></a></td>
+                    <td><%= leaderboard[i].troop_guide %></td>
+                    <td><%= leaderboard[i].session %></td>
+                    <td><%= leaderboard[i].points %></td>
+                </tr>
+            <%}%>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    /**
+     * Removes row from table
+     * @param id
+     */
+    function removeRow(id) {
+        var row = document.getElementById(id);
+        row.parentNode.removeChild(row);
+    }
+    /**
+     * Sorts table by selected column
+     * @param n
+     */
+    function sortTable(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("adddrop");
+        switching = true;
+        dir = "asc";
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                if (dir === "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount ++;
+            } else {
+                if (switchcount === 0 && dir === "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+    function myFunction() {
+        var input, filter, ul, tr, a, i;
+        input = document.getElementById("mySearch");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("search-list");
+        tr = ul.getElementsByTagName("tr");
+        for (i = 1; i < tr.length; i++) {
+            a = tr[i].getElementsByTagName("a")[0];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+</script>
+</body>
+</html>

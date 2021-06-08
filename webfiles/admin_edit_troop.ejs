@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Troop Game Admin Panel</title>
+    <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+
+<h2 style="display: inline-block; margin-left: 20px">Troop Game Admin Panel</h2>
+
+<div class="row">
+    <div class="left" style="background-color:#bbb;max-width: 10%;">
+        <ul id="myMenu">
+            <li><a href="/admin">Home</a></li>
+            <li><a href="/admin/leaderboard">Leaderboard</a></li>
+            <li><a href="/admin/questions">Quests</a></li>
+        </ul>
+    </div>
+
+    <div class="right" style="background-color:#ddd;">
+        <h2>Update <%=leaderboard.troop_number%></h2>
+        <form action="/admin/leaderboard/<%= leaderboard._id %>/update" enctype="multipart/form-data" target="formSubmitFrame" method="post">
+            <div class="form-section">
+                <div class="section-info">
+                    <h2>Meta information</h2>
+                    <p>Update the Troop number, guide name, or session number</p>
+                </div>
+                <div class="section-inputs">
+                    <div class="input-div">
+                        <label for="troop_number">Troop Name:</label>
+                        <input type="text" id="troop_number" name="troop_number" value="<%=leaderboard.troop_number%>">
+                    </div>
+
+                    <div class="input-div">
+                        <label for="troop_guide">Troop Guide Name:</label>
+                        <input type="text" id="troop_guide" name="troop_guide" value="<%=leaderboard.troop_guide%>">
+                    </div>
+
+                    <div class="input-div">
+                        <label for="session">Period:</label><br>
+                        <input type="number" id="session" name="session" min="1" max="8" value="<%=leaderboard.session%>">
+                    </div>
+
+                    <div class="input-div">
+                        <label for="points">Points:</label><br>
+                        <input type="number" id="points" name="points" value="<%=leaderboard.points%>" readonly>
+                    </div>
+                    </div>
+                </div>
+            <div class="form-section">
+                <div class="section-info">
+                    <h2>Submit or Delete Troop</h2>
+                    <p></p>
+                </div>
+                <div class="section-inputs">
+                    <div>
+                        <button type="submit" class="btn">Submit</button>
+                        <button type="button" class="btn" onclick="deleteTroop()">Delete Troop</button>
+                        <iframe name="formSubmitFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function deleteTroop() {
+        if (confirm('Delete the troop?')) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    alert('Troop has been deleted');
+                    window.location.replace("/admin/leaderboard");
+                }
+                else if (this.readyState === 4){
+                    alert("Unable to delete Troop.")
+                }
+            };
+            xhttp.open("POST", "/admin/leaderboard/<%=leaderboard._id%>/delete", true);
+            xhttp.send();
+        }
+    }
+</script>
+</body>
+</html>
