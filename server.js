@@ -83,10 +83,10 @@ app.get('/game', function(req, res) {
         res.sendStatus(400);
     });
 });
-app.get('/css/:filename', function(req, res) {
+app.get('/game/css/:filename', function(req, res) {
     res.sendFile(__dirname + '/webfiles/css/' + req.params.filename);
 });
-app.get('/js/:filename', function(req, res) {
+app.get('/game/js/:filename', function(req, res) {
     res.sendFile(__dirname + '/webfiles/js/' + req.params.filename);
 });
 
