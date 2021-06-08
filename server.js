@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const multer = require('multer');
+const morgan = require('morgan');
 const ejs = require('ejs');
 const upload = multer();
 const cors = require('cors');
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 require('events').EventEmitter.defaultMaxListeners = 50;
 app.use(upload.array());
 app.use(express.static('public'));
+app.use(morgan('combined'))
 
 app.set('etag', false);
 app.disable('x-powered-by');
