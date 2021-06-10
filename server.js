@@ -294,5 +294,4 @@ app.listen(port, function (err) {
     app.use(cors());
 
     console.log('Server started on port ' + port)
-    console.log('Hey')
 });
