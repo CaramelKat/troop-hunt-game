@@ -36,7 +36,7 @@ app.post('/game/redeemQuestion', function(req, res){
             res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>An Error occurred, Please try again later</div></center>');
         else
         {
-            if(await troop.hasQuestion(question._id))
+            if(await troop.hasQuestion(question._id) && !question.reusable)
                 res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>You have already redeemed that question!</div></center>');
             else
             {
