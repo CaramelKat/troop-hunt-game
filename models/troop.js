@@ -5,7 +5,7 @@ const TroopSchema = new Schema({
     troop_guide: String,
     session: Number,
     points: Number,
-    questions: [String],
+    questions: [Object],
 }, { collection: 'troops' });
 
 
@@ -29,7 +29,7 @@ TroopSchema.methods.addQuestion = async function(question_id) {
 };
 
 TroopSchema.methods.hasQuestion = async function(question_id) {
-    return this.questions.includes(question_id);
+    return this.questions.indexOf(question_id) !== -1;
 };
 
 const Troop = model('TROOP', TroopSchema);

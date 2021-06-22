@@ -36,12 +36,12 @@ app.post('/game/redeemQuestion', function(req, res){
             res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>An Error occurred, Please try again later</div></center>');
         else
         {
-            if(await troop.hasQuestion(question.question_id))
+            if(await troop.hasQuestion(question._id))
                 res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>You have already redeemed that question!</div></center>');
             else
             {
                 await troop.addPoints(parseInt(question.question_value));
-                await troop.addQuestion(question.question_id);
+                await troop.addQuestion(question._id);
                 res.send('<link rel="stylesheet" href="webfiles/css/layout.css">\n<center><div>Question Received! Your troop now has ' + troop.points + ' points!</div></center>');
             }
         }
