@@ -8,43 +8,17 @@
         <!-- Place favicon.ico in the root directory -->
 
         <link rel="stylesheet" href="/game/css/default.css">
-        <link rel="stylesheet" href="/game/css/default.css">
-        <link rel="stylesheet" href="/game/css/layout.css">
-        <link rel="stylesheet" href="/game/css/media-queries.css">
-        <link rel="stylesheet" href="/game/css/normalize.css">
-        <style>
-            table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            th {
-                cursor: pointer;
-            }
-
-            th, td {
-                text-align: left;
-                padding: 16px;
-            }
-
-            tr:nth-child(even) {
-                background-color: #dddddd;
-            }
-        </style>
-        <title>Scavenger Hunt Leaderboard</title>
+        <title>Smiley Cup</title>
     </head>
     <body>
-        <div class="top-container">
-            <h1>Scavenger Hunt Leaderboard</h1>
-            <h4>Week <%= settings.period%></h4>
-        </div>
-        <center>
+    <header>
+        <h1>Smiley Cup</h1>
+    </header>
+        <div class="table-wrapper">
             <table id="adddrop">
                 <tbody id="search-list">
                 <tr>
                     <th onClick="sortTable(0)">Troop</th>
-                    <th onClick="sortTable(1)">Host</th>
                     <th onClick="sortTable(2)">Points</th>
                 </tr>
                 <% if(leaderboard.length === 0) {%>
@@ -59,12 +33,12 @@
                 <% for(var i = 0; i < leaderboard.length; i++) { %>
                     <tr>
                         <td><a><%= leaderboard[i].troop_number %></a></td>
-                        <td><%= leaderboard[i].troop_guide %></td>
                         <td><%= leaderboard[i].points %></td>
                     </tr>
                 <%}%>
                 </tbody>
             </table>
-        </center>
+        </div>
+    <footer></footer>
     </body>
 </html>

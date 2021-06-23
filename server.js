@@ -228,7 +228,8 @@ app.post('/admin/questions/new', function(req, res){
     database.connect().then(async e => {
         let question = {
             question_text: req.body.question_text,
-            question_value: req.body.question_value
+            question_value: req.body.question_value,
+            reusable: req.body.reusable
         };
         const newPost = new QUESTION(question);
         newPost.save();
@@ -262,6 +263,9 @@ app.post('/admin/questions/:questionID/update', function(req, res){
 
         if(req.body.question_value && question.question_value !== req.body.question_value)
             question.question_value = req.body.question_value;
+
+        if(req.body.reusable && question.reusable !== req.body.reusable)
+            question.reusable = req.body.reusable;
 
         question.save();
         res.send('<h2>Question has been Updated</h2>');

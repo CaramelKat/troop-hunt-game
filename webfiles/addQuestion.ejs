@@ -8,25 +8,17 @@
     <!-- Place favicon.ico in the root directory -->
 
     <link rel="stylesheet" href="/game/css/default.css">
-    <link rel="stylesheet" href="/game/css/default.css">
-    <link rel="stylesheet" href="/game/css/layout.css">
-    <link rel="stylesheet" href="/game/css/media-queries.css">
-    <link rel="stylesheet" href="/game/css/normalize.css">
 
     <title>Scavenger Hunt Leaderboard</title>
 </head>
 <body>
-<div class="top-container">
-    <h1>Question: </h1>
-    <aside class="pull-quote">
-        <blockquote>
-            <p><%= question.question_text%></p>
-        </blockquote>
-    </aside>
-</div>
-<center><br>
+<header style="flex-direction: column;align-items: center;">
+    <h1>Redeem Question</h1>
+</header>
+<div class="table-wrapper add-question-wrapper">
+    <h3>"<%= question.question_text%>"</h3>
     <label for="troop_number">Select your Troop:</label>
-    <form action="/game/redeemQuestion" target="testing" enctype="multipart/form-data" method="post">
+    <form action="/game/redeemQuestion" target="testing" enctype="multipart/form-data" method="post" class="question-form">
         <input type="hidden" id="question_id" name="question_id" value="<%=question._id%>">
         <select  name="troop_number" id="troop_number">
             <% for(var i = 0; i < troops.length; i++){%>
@@ -35,7 +27,8 @@
         </select><br>
         <input type="submit" value="Submit">
     </form>
-    <iframe name="testing"></iframe>
-</center>
+    <iframe name="testing" style="border: none; height: 60px"></iframe>
+</div>
+<footer></footer>
 </body>
 </html>
