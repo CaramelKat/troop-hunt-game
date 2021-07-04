@@ -4,22 +4,22 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- Place favicon.ico in the root directory -->
+        <script src="https://kit.fontawesome.com/1b88120e53.js" crossorigin="anonymous"></script>        <!-- Place favicon.ico in the root directory -->
 
         <link rel="stylesheet" href="/game/css/default.css">
         <title>Smiley Cup</title>
     </head>
     <body>
     <header>
+        <i class="fas fa-chevron-left fa-2x" onclick="history.back()"></i>
         <h1>Smiley Cup</h1>
     </header>
         <div class="table-wrapper">
-            <table id="adddrop">
-                <tbody id="search-list">
+            <table id="troop-game">
+                <tbody>
                 <tr>
-                    <th onClick="sortTable(0)">Troop</th>
-                    <th onClick="sortTable(2)">Points</th>
+                    <th>Troop</th>
+                    <th>Points</th>
                 </tr>
                 <% if(leaderboard.length === 0) {%>
                     <tr>

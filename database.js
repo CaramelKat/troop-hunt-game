@@ -20,52 +20,50 @@ function verifyConnected() {
 
 async function getTroopByID(troop_id) {
     verifyConnected();
-    return await TROOP.findOne({
+    return TROOP.findOne({
         _id: troop_id
     });
 }
 
 async function getTroopByNumber(troop_number) {
     verifyConnected();
-    return await TROOP.findOne({
+    return TROOP.findOne({
         troop_number
     });
 }
 
 async function getTroopByGuideName(troop_guide) {
     verifyConnected();
-    return await TROOP.findOne({
+    return TROOP.findOne({
         troop_guide
     });
 }
 
 async function getTroopsBySession(session) {
     verifyConnected();
-    return await TROOP.find({
-        session
-    });
+    return TROOP.find({ session }).sort({points: -1});
 }
 
 async function getAllTroops() {
     verifyConnected();
-    return await TROOP.find();
+    return TROOP.find();
 }
 
 async function getQuestionByID(question_id) {
     verifyConnected();
-    return await QUESTION.findOne({
+    return QUESTION.findOne({
         _id: question_id
     });
 }
 
 async function getAllQuestions() {
     verifyConnected();
-    return await QUESTION.find();
+    return QUESTION.find();
 }
 
 async function getSettings() {
     verifyConnected();
-    return await SETTINGS.findOne();
+    return SETTINGS.findOne();
 }
 
 module.exports = {
